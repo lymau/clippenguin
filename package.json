@@ -1,0 +1,26 @@
+{
+  "name": "clippenguin",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Clippenguin — Screen Capture & Screen Record to Google Drive (MV3)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.1",
+    "@types/chrome": "^0.1.0",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.2.0"
+  }
+}
