@@ -24,7 +24,7 @@ export type Message =
 // but we keep a broad MessageResponse for backwards compatibility with
 // existing screens that only check `ok`.
 export type MessageResponse =
-  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[]; email?: string; result?: UploadResult }
+  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[]; email?: string; result?: UploadResult; dataUrl?: string; filename?: string; mimeType?: string }
   | { ok: false; error: AppError };
 
 // Narrow helpers for auth
@@ -34,6 +34,10 @@ export type AuthGetTokenResponse =
 
 export type AuthSignOutResponse =
   | { ok: true }
+  | { ok: false; error: AppError };
+
+export type ScreenshotCaptureResponse =
+  | { ok: true; dataUrl: string; filename: string; mimeType: string }
   | { ok: false; error: AppError };
 
 // ─── Runtime helper ──────────────────────────────────────────────────────
@@ -77,4 +81,8 @@ export function requestAuthToken(interactive = true): Promise<AuthGetTokenRespon
 
 export function requestSignOut(): Promise<AuthSignOutResponse> {
   return sendMessage({ type: "AUTH_SIGN_OUT" }) as Promise<AuthSignOutResponse>;
+}
+
+export function requestScreenshotCapture(): Promise<ScreenshotCaptureResponse> {
+  return sendMessage({ type: "SCREENSHOT_CAPTURE" }) as Promise<ScreenshotCaptureResponse>;
 }

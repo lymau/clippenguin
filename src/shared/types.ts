@@ -93,5 +93,5 @@ export type Message =
   | { type: "GET_RECENT_UPLOADS" };
 
 export type MessageResponse =
-  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[]; email?: string; result?: UploadResult }
+  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[]; email?: string; result?: UploadResult; dataUrl?: string; filename?: string; mimeType?: string }
   | { ok: false; error: AppError };
