@@ -3,6 +3,7 @@ import { Button } from "../components/Button";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { Toast } from "../components/Toast";
 import type { UploadProgress, UploadResult } from "../../shared/types";
+import { sanitizeFilename, validateFilenameInput } from "../../capture/screenshot";
 
 export type ResultMode = "preview" | "uploading" | "success" | "error";
 
@@ -36,19 +37,35 @@ export function ResultScreen({
   onOpenInDrive,
 }: ResultScreenProps) {
   const [filename, setFilename] = useState(initialFilename);
+  const [touched, setTouched] = useState(false);
   const inputId = useId();
 
   useEffect(() => {
     setFilename(initialFilename);
+    setTouched(false);
   }, [initialFilename]);
 
   const isImage = mimeType?.startsWith("image/");
   const isVideo = mimeType?.startsWith("video/");
 
+  // Validate on the sanitized form; show error only after user touched
+  const validationError = validateFilenameInput(filename);
+  const showValidationError = touched && validationError && (mode === "preview" || mode === "error");
+
   const handleSave = () => {
-    const trimmed = filename.trim() || initialFilename;
-    onSave(trimmed);
+    const sanitized = sanitizeFilename(filename.trim() || initialFilename);
+    onSave(sanitized);
   };
+
+  const canSave =
+    mode === "preview" || mode === "error"
+      ? (() => {
+          const v = filename.trim();
+          // Empty is not allowed; ResultScreen will sanitize on save anyway
+          if (!v) return false;
+          return validateFilenameInput(v) === null || sanitizeFilename(v) !== "";
+        })()
+      : true;
 
   return (
     <div className="popup__body">
@@ -110,13 +127,25 @@ export function ResultScreen({
             value={filename}
             onChange={(e) => {
               setFilename(e.target.value);
+              setTouched(true);
               onFilenameChange?.(e.target.value);
             }}
+            onBlur={() => setTouched(true)}
             placeholder={initialFilename}
             aria-label="Filename for upload"
+            aria-invalid={showValidationError ? true : undefined}
+            aria-describedby={showValidationError ? `${inputId}-error` : undefined}
             spellCheck={false}
             autoComplete="off"
           />
+          <p className="hint" style={{ margin: "4px 0 0", fontSize: "var(--text-xs)" }} aria-hidden={showValidationError ? true : undefined}>
+            Will be saved as <code style={{ wordBreak: "break-all" }}>{sanitizeFilename(filename.trim() || initialFilename)}</code>
+          </p>
+          {showValidationError ? (
+            <p id={`${inputId}-error`} className="text-sm-muted" role="alert" style={{ margin: "4px 0 0", color: "var(--danger, #dc2626)" }}>
+              {validationError}
+            </p>
+          ) : null}
         </div>
       ) : mode === "success" ? (
         <p className="text-sm-muted" style={{ margin: 0, wordBreak: "break-all" }} aria-live="polite">
@@ -128,7 +157,13 @@ export function ResultScreen({
       <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
         {mode === "preview" || mode === "error" ? (
           <>
-            <Button variant="primary" fullWidth onClick={handleSave} aria-label="Save to Google Drive" disabled={!filename.trim()}>
+            <Button
+              variant="primary"
+              fullWidth
+              onClick={handleSave}
+              aria-label="Save to Google Drive"
+              disabled={!canSave}
+            >
               Save to Google Drive
             </Button>
             <Button variant="ghost" fullWidth onClick={onDone}>

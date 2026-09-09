@@ -4,6 +4,7 @@
 import type { Message, MessageResponse } from "../shared/messages";
 import { getAuthToken, signOut, getAuthState } from "../google/auth";
 import { loadAuthEmail } from "../shared/auth-state";
+import { captureScreenshot, SCREENSHOT_MIME } from "../capture/screenshot";
 
 const TAG = "[Clippenguin:SW]";
 
@@ -113,14 +114,47 @@ async function handleMessage(message: Message): Promise<MessageResponse> {
       }
     }
 
+    case "SCREENSHOT_CAPTURE": {
+      try {
+        const result = await captureScreenshot();
+        console.log(`${TAG} SCREENSHOT_CAPTURE ok`, result.filename);
+        return {
+          ok: true,
+          dataUrl: result.dataUrl,
+          filename: result.filename,
+          mimeType: result.blob.type || SCREENSHOT_MIME,
+        };
+      } catch (err) {
+        // captureScreenshot throws AppError-shaped objects
+        const appErr =
+          err && typeof err === "object" && "code" in err && "message" in err
+            ? (err as Extract<MessageResponse, { ok: false }>["error"])
+            : null;
+        if (appErr && typeof appErr.message === "string") {
+          console.warn(`${TAG} SCREENSHOT_CAPTURE failed`, appErr.code);
+          return { ok: false, error: appErr };
+        }
+        const fallback = err instanceof Error ? err.message : String(err);
+        console.warn(`${TAG} SCREENSHOT_CAPTURE failed (fallback)`, fallback.slice(0, 160));
+        return {
+          ok: false,
+          error: {
+            code: "CAPTURE_FAILED",
+            message: "Screenshot failed. Please try again.",
+            details: fallback,
+            recoverable: true,
+          },
+        };
+      }
+    }
+
     case "GET_STATE":
     case "PING":
     case "GET_RECENT_UPLOADS":
-    case "SCREENSHOT_CAPTURE":
     case "RECORDING_START":
     case "RECORDING_STOP":
     case "UPLOAD_FILE":
-      // Forward-compatible stubs — ISSUE-004/005/006 implement these.
+      // Forward-compatible stubs — ISSUE-005/006 implement these.
       // For now echo back so callers don't hang; log without sensitive data.
       console.log(`${TAG} ${message.type} (not yet implemented)`);
       return { ok: true, echo: message };
