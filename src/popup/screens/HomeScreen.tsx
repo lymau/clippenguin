@@ -7,16 +7,32 @@ export interface HomeScreenProps {
   recentUploads?: RecentUpload[];
   onScreenshot: () => void;
   onRecord: () => void;
+  onDisconnect?: () => void;
+  isSigningOut?: boolean;
   onOpenSettings?: () => void;
   onOpenRecent?: (item: RecentUpload) => void;
 }
 
-export function HomeScreen({ connectedEmail, recentUploads = [], onScreenshot, onRecord, onOpenSettings, onOpenRecent }: HomeScreenProps) {
+export function HomeScreen({
+  connectedEmail,
+  recentUploads = [],
+  onScreenshot,
+  onRecord,
+  onDisconnect,
+  isSigningOut = false,
+  onOpenSettings,
+  onOpenRecent,
+}: HomeScreenProps) {
   return (
     <div className="popup__body">
       {/* Connection status — text + dot, not color-only (§20) */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
         <StatusIndicator variant={connectedEmail ? "connected" : "default"} label={connectedEmail ? `Connected · ${connectedEmail}` : "Not connected"} />
+        {connectedEmail && onDisconnect ? (
+          <Button variant="ghost" size="sm" onClick={onDisconnect} loading={isSigningOut} disabled={isSigningOut} aria-label="Disconnect Google Drive">
+            Disconnect
+          </Button>
+        ) : null}
       </div>
 
       <div>
