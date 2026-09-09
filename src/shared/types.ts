@@ -77,10 +77,13 @@ export interface AppError {
 }
 
 // ─── Messaging (typed runtime messages) ──────────────────────────────
+// Canonical message types live in ./messages.ts — this re-export keeps
+// existing imports working. Prefer importing from "./messages" for new code.
 
 export type Message =
   | { type: "AUTH_GET_TOKEN"; interactive?: boolean }
   | { type: "AUTH_SIGN_OUT" }
+  | { type: "AUTH_GET_STATE" }
   | { type: "SCREENSHOT_CAPTURE" }
   | { type: "RECORDING_START"; audioMode?: ExtensionSettings["preferredAudioMode"] }
   | { type: "RECORDING_STOP" }
@@ -90,5 +93,5 @@ export type Message =
   | { type: "GET_RECENT_UPLOADS" };
 
 export type MessageResponse =
-  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[] }
+  | { ok: true; echo?: unknown; state?: AppState; recentUploads?: RecentUpload[]; email?: string; result?: UploadResult }
   | { ok: false; error: AppError };
