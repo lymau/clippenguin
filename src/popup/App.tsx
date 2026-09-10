@@ -11,6 +11,7 @@ import { Toast } from "./components/Toast";
 import { useAuth } from "./hooks/useAuth";
 import { useScreenshot } from "./hooks/useScreenshot";
 import { sanitizeFilename } from "../capture/screenshot";
+import { openRecorderPage } from "../capture/recording";
 
 // ─── Mock data for non-auth states (kept for DoD: all states render) ──────
 const MOCK_RECENT: RecentUpload[] = [
@@ -246,8 +247,17 @@ export default function App() {
     await handleScreenshot();
   }, [screenshot, handleScreenshot]);
 
-  const handleRecord = useCallback(() => {
-    setDisplayState("CAPTURING");
+  const handleRecord = useCallback(async () => {
+    // Dedicated recorder page owns MediaStream + MediaRecorder (§7) — popup must not.
+    // Must be called from user gesture so getDisplayMedia retains activation.
+    try {
+      await openRecorderPage();
+      // Popup will lose focus when recorder tab opens; no state change needed.
+      // Keep CAPTURING as fallback only for non-extension (vite dev) previews.
+    } catch {
+      // Fallback for vite dev: show mock capturing screen
+      setDisplayState("CAPTURING");
+    }
   }, [setDisplayState]);
 
   const handleSave = useCallback(

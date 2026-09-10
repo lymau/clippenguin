@@ -1,0 +1,165 @@
+/* Clippenguin Recorder Page — dedicated window styles
+   Spec ref: issue.md §7 Recording Architecture, §13, §20, §21
+   Reuses design tokens from global.css (duplicate tokens for standalone page)
+*/
+@import "../styles/global.css";
+
+/* Recorder page overrides body width constraint from popup global.css */
+html, body {
+  width: auto;
+  min-height: 100vh;
+  max-width: none;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px;
+}
+
+.recorder {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recorder__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.recorder__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.recorder__logo {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.recorder__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--text-strong);
+}
+
+.recorder__subtitle {
+  margin: 2px 0 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.recorder__main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.view {
+  animation: fadeIn 160ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card--recording {
+  border-color: var(--danger-border);
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(239,68,68,0.04) 100%);
+}
+
+.timer-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 0 8px;
+}
+
+.timer {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.recorder__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+#rec-indicator {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.preview {
+  min-height: 220px;
+}
+
+.preview video,
+.preview img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.recorder__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  body { padding: 12px 8px; }
+  .timer { font-size: 40px; }
+  .recorder__header { padding: 12px 14px; }
+}

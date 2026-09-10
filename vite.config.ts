@@ -39,5 +39,12 @@ export default defineConfig(({ mode }) => {
         port: 5173,
       },
     },
+    build: {
+      rollupOptions: {
+        input: {
+          recorder: "src/recorder/recorder.html",
+        },
+      },
+    },
   };
 });

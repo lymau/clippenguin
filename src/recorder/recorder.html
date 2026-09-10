@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clippenguin Recorder</title>
+    <link rel="stylesheet" href="./recorder.css" />
+  </head>
+  <body>
+    <div id="app" class="recorder">
+      <header class="recorder__header">
+        <div class="recorder__brand">
+          <span class="recorder__logo" aria-hidden="true">🐧</span>
+          <div>
+            <h1 class="recorder__title">Clippenguin Recorder</h1>
+            <p class="recorder__subtitle">Select a screen, window, or tab to record</p>
+          </div>
+        </div>
+        <span class="badge" id="state-badge" aria-live="polite">idle</span>
+      </header>
+
+      <main id="main" class="recorder__main">
+        <!-- Idle -->
+        <section id="view-idle" class="view">
+          <div class="card">
+            <h2 class="heading-md">Ready to record</h2>
+            <p class="text-muted">Click Start Recording and pick what to share using the browser's picker. You can record several minutes without leaving this page.</p>
+            <div class="hint" id="idle-hint">Audio capture depends on your browser and OS. If system audio isn't available, the recording will still include video.</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+              <button id="btn-start" type="button" class="btn btn--primary btn--lg">Start Recording</button>
+              <button id="btn-close-idle" type="button" class="btn btn--ghost">Close</button>
+            </div>
+            <p class="hint" style="margin-top:12px">Tip: this page owns the recording — don't close it until you stop. The popup won't interrupt it.</p>
+          </div>
+          <div id="idle-error" class="toast toast--error" style="display:none" role="alert"></div>
+        </section>
+
+        <!-- Recording -->
+        <section id="view-recording" class="view" style="display:none">
+          <div class="card card--recording">
+            <div class="status status--recording" aria-live="polite">
+              <span class="status__dot" aria-hidden="true"></span>
+              <span class="status__label">Recording</span>
+              <span id="rec-indicator" class="badge" style="margin-left:auto">● REC</span>
+            </div>
+
+            <div class="timer-wrap">
+              <div class="timer__label">Elapsed</div>
+              <div id="timer" class="timer" role="timer" aria-live="off">00:00</div>
+              <div id="audio-status" class="text-sm-muted" aria-live="polite">Audio: checking…</div>
+              <div id="mime-status" class="text-sm-muted"></div>
+            </div>
+
+            <div class="recorder__actions">
+              <button id="btn-stop" type="button" class="btn btn--danger btn--lg btn--full">Stop</button>
+              <div style="display:flex;gap:8px">
+                <button id="btn-pause" type="button" class="btn btn--secondary" style="flex:1">Pause</button>
+                <button id="btn-cancel" type="button" class="btn btn--ghost" style="flex:1">Cancel</button>
+              </div>
+            </div>
+
+            <p class="hint">Stop sharing from the browser bar also ends recording. Tracks are released automatically after you stop.</p>
+            <div id="rec-error" class="toast toast--error" style="display:none" role="alert"></div>
+          </div>
+        </section>
+
+        <!-- Preview -->
+        <section id="view-preview" class="view" style="display:none">
+          <div class="card">
+            <h2 class="heading-sm">Preview</h2>
+            <div class="preview" id="preview-wrap">
+              <video id="preview-video" controls playsinline style="display:none"></video>
+              <div id="preview-placeholder" class="preview__placeholder">No preview yet.</div>
+            </div>
+
+            <div class="field">
+              <label for="filename-input" class="field__label">Filename</label>
+              <input id="filename-input" class="input" type="text" spellcheck="false" autocomplete="off" />
+              <p class="hint" id="filename-hint" style="margin:4px 0 0"></p>
+              <p id="filename-error" class="text-sm-muted" role="alert" style="display:none;color:var(--danger)"></p>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="btn-download" type="button" class="btn btn--primary" style="flex:1">Download</button>
+              <button id="btn-record-again" type="button" class="btn btn--secondary" style="flex:1">Record Again</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="btn-close-preview" type="button" class="btn btn--ghost" style="flex:1">Close</button>
+            </div>
+
+            <p class="hint">Save to Drive upload will be available after the Drive integration (ISSUE-006). For now you can download the file and preview it here.</p>
+            <div id="preview-meta" class="text-sm-muted" style="margin-top:8px"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="recorder__footer">
+        <span class="badge">Clippenguin · MV3</span>
+        <span class="hint">Esc to stop · Space to pause/resume</span>
+      </footer>
+    </div>
+    <script type="module" src="./recorder.ts"></script>
+  </body>
+</html>
