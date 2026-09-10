@@ -13,6 +13,12 @@
   },
   "permissions": ["activeTab", "storage", "identity"],
   "host_permissions": [],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/recorder/recorder.html", "src/recorder/*", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "oauth2": {
     "client_id": "YOUR_OAUTH_CLIENT_ID.apps.googleusercontent.com",
     "scopes": [
